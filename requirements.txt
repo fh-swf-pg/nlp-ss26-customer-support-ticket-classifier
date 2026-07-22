@@ -8,6 +8,7 @@ tokenizers>=0.20.0
 safetensors>=0.4.5
 
 pydantic>=2.9.0
+pydantic-settings>=2.5.0
 python-dotenv>=1.0.1
 
 numpy>=2.0.0
