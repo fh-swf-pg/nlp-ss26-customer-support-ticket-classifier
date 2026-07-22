@@ -19,6 +19,42 @@ Ein modularer, produktionsnaher NLP-Microservice zur automatischen Klassifizieru
 
 ---
 
+## 🏗️ MLOps- & System-Architektur
+
+Das Projekt trennt strikt zwischen **Lokaler Modellentwicklung/Training**, **Modell-Publishing** und **Inferenz-Deployment**:
+
+```text
++---------------------------+
+|     GitHub Repository     |
+|---------------------------|
+| app/                      |
+| training/                 |
+| scripts/                  |
+| notebooks/                |
+| tests/                    |
+| docs/                     |
+| Dockerfile                |
+| requirements*.txt         |
++-------------+-------------+
+              |
+              v
++---------------------------+
+| Hugging Face Spaces       |
+|---------------------------|
+| FastAPI Engine            |
+| (Lädt Modelle beim Start) |
++-------------+-------------+
+              |
+              v
++---------------------------+
+| Hugging Face Model Hub    |
+|---------------------------|
+| category-model            |
+| sentiment-model           |
++---------------------------+
+
+---
+
 ## 🏗️ System-Architektur
 
 Das Projekt trennt strikt zwischen **Lokaler Modellentwicklung/Training** und schlankem **Inferenz-Deployment**:
@@ -114,7 +150,7 @@ customer-support-ticket-classifier/
 │   ├── main.py                     # API REST-Endpunkte (/health, /predict)
 │   ├── config.py                   # App-Konfiguration & Umgebungsvariablen
 │   ├── schemas.py                  # Pydantic Schemas für Request/Response
-│   ├── model_handler.py            # Lädt Modelle aus saved_models/ in den Speicher
+│   ├── model_handler.py            # Lädt Modelle aus models/ in den Speicher
 │   ├── inference.py                # Führt Modellvorhersagen aus
 │   ├── preprocessing.py            # Textbereinigung & Normalisierung
 │   └── priority_engine.py          # Business-Logik zur Prioritätsberechnung
@@ -129,9 +165,13 @@ customer-support-ticket-classifier/
 │   ├── raw/                        # Kaggle Originaldateien
 │   └── processed/                  # Vorverarbeitete Datensätze
 │
-├── saved_models/                   # Feingetunte Gewichte (in .gitignore)
-│   ├── category_model/             # config.json, model.safetensors, tokenizer
-│   └── sentiment_model/            # config.json, model.safetensors, tokenizer
+├── models/                         # Vortrainierte Basismodelle und feingetunte Gewichte
+│   ├── base/
+│   │   ├── distilbert-base-uncased/
+│   │   └── roberta-base/
+│   └── fine_tuned/
+│       ├── category_model/
+│       └── sentiment_model/
 │
 ├── notebooks/                      # Jupyter Notebooks für Analysen
 │   ├── 01_data_exploration.ipynb
@@ -167,6 +207,7 @@ customer-support-ticket-classifier/
 git clone <repository-url>
 cd customer-support-ticket-classifier
 ```
+
 ### 2. Virtuelle Umgebung aufsetzen
 
 ```bash
@@ -174,17 +215,12 @@ python -m venv .venv
 source .venv/bin/activate  # Unter Windows: .venv\Scripts\activate
 ```
 
-### 3. Umgebungsvariablen konfigurieren
-
-```bash
-cp .env.example .env
-```
-
-### 4. Abhängigkeiten installieren
+### 3. Abhängigkeiten installieren
 
 Für das **lokale Training** und Entwickeln:
 
 ```bash
+pip install --upgrade pip
 pip install -r requirements-dev.txt
 ```
 
@@ -192,6 +228,17 @@ Für **nur die Inferenz / API** (Production Deployment):
 
 ```bash
 pip install -r requirements.txt
+```
+
+### 4. Models herunterladen
+
+```bash
+python scripts/download_models.py
+```
+
+### 5. App starten
+```bash
+python -m uvicorn app.main:app --reload
 ```
 
 ---
@@ -214,7 +261,7 @@ python training/train_sentiment.py
 ```
 
 
-Die fertigen Gewichte werden automatisch im performanten `.safetensors`-Format unter `saved_models/` abgelegt.
+Die fertigen Gewichte werden automatisch im performanten `.safetensors`-Format unter `models/fine_tuned/` abgelegt.
 3. **Modelle evaluieren:**
 
 ```bash
@@ -245,7 +292,6 @@ Die interaktive Swagger-Dokumentation ist anschließend unter **`http://localhos
 {
   "text": "I cannot access my account after the latest system update and need urgent help!"
 }
-
 ```
 
 **Response Body:**
@@ -296,4 +342,4 @@ docker run -p 8000:8000 ticket-classifier
 
 ## 📄 Lizenz
 
-Dieses Projekt steht unter der [MIT License](https://www.google.com/search?q=LICENSE).
+Dieses Projekt steht unter der MIT License

@@ -1,6 +1,12 @@
 data/
-saved_models/
+models/
 __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 .env
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
