@@ -14,7 +14,7 @@ from transformers import (
     TrainingArguments,
     Trainer,
 )
-import evaluate
+import evaluate_model
 
 try:
     from training.metrics import compute_classification_metrics
@@ -155,11 +155,11 @@ def parse_args() -> argparse.Namespace:
         default=OUTPUT_DIR,
         help="Directory where the fine-tuned sentiment model will be saved.",
     )
-    parser.add_argument("--num-train-epochs", type=int, default=3)
-    parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--num-train-epochs", type=int, default=8)
+    parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=2e-5)
-    parser.add_argument("--max-steps", type=int, default=1000, help="Maximum number of training steps/batches.")
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--max-steps", type=int, default=-1, help="Maximum number of training steps/batches.")
+    parser.add_argument("--seed", type=int, default=50)
     return parser.parse_args()
 
 

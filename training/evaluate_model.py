@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trainer
-import evaluate
+import evaluate_model
 
 try:
     from training.metrics import compute_classification_metrics

@@ -36,7 +36,7 @@ class TextDataset(torch.utils.data.Dataset):
             self.texts[idx],
             truncation=True,
             padding="max_length",
-            max_length=512,
+            max_length=256,
             return_tensors="pt",
         )
         item = {key: value.squeeze(0) for key, value in encoding.items()}
@@ -70,7 +70,7 @@ def tokenize_batch(examples: dict[str, Any], tokenizer: AutoTokenizer) -> dict[s
         examples["text"],
         truncation=True,
         padding="max_length",
-        max_length=512,
+        max_length=256,
     )
 
 
@@ -155,11 +155,11 @@ def parse_args() -> argparse.Namespace:
         default=OUTPUT_DIR,
         help="Directory where the fine-tuned category model will be saved.",
     )
-    parser.add_argument("--num-train-epochs", type=int, default=3)
-    parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--num-train-epochs", type=int, default=8)
+    parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=2e-5)
-    parser.add_argument("--max-steps", type=int, default=1000, help="Maximum number of training steps/batches.")
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--max-steps", type=int, default=-1, help="Maximum number of training steps/batches.")
+    parser.add_argument("--seed", type=int, default=50)
     return parser.parse_args()
 
 
