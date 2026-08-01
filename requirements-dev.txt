@@ -1,7 +1,7 @@
 -r requirements.txt
 
 datasets>=3.0.0
-accelerate>=1.0.0
+accelerate>=1.1.0
 evaluate>=0.4.3
 
 pandas>=2.2.0
